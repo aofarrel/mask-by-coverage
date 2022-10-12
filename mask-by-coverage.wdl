@@ -24,7 +24,7 @@ task make_mask_file {
 
 	runtime {
 		cpu: cpu
-		docker: "ashedpotatoes/iqbal-unofficial-clockwork-mirror:latest"
+		docker: "ashedpotatoes/sranwrp:1.0.2"
 		disks: "local-disk " + finalDiskSize + " HDD"
 		maxRetries: "${retries}"
 		memory: "${memory} GB"
