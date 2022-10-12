@@ -13,11 +13,13 @@ task make_mask_file {
 		Int preempt  = 1
 	}
 	String basestem = basename(sam, ".sam")
-	Int finalDiskSize = ceil(size(sam)) + addldisk
-
+	Int finalDiskSize = ceil(size(sam, "GB")) + addldisk
+	
 	command <<<
 	samtools sort -u ~{sam} > sorted_~{basestem}.sam
-	bedtools genomecov -ibam sorted_u_SAMEA2534421.sam -bga | awk '$4 < ~{min_coverage}' > low_coverage.bga
+	bedtools genomecov -ibam sorted_u_SAMEA2534421.sam -bga | \
+		awk '$4 < ~{min_coverage}' > \
+		~{basestem}_below_~{min_coverage}x_coverage.bga
 	>>>
 
 	runtime {
@@ -30,7 +32,7 @@ task make_mask_file {
 	}
 
 	output {
-		File mask_file = "low_coverage.bga"
+		File mask_file = glob("*coverage.bga")[0]
 	}
 
 }
@@ -48,5 +50,9 @@ workflow MaskByCoverage {
 				sam = sam,
 				min_coverage = min_coverage
 		}
+	}
+
+	output {
+		Array[File] mask_files = make_mask_file.mask_file
 	}
 }
