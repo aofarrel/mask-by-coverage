@@ -18,7 +18,7 @@ task make_mask_file {
 	command <<<
 	set -eux pipefail
 	cp ~{sam} .
-	samtools sort -u ~{basestem}.sam > sorted_~{basestem}.sam
+	samtools sort -u ~{basestem}.sam > sorted_u_~{basestem}.sam
 	bedtools genomecov -ibam sorted_u_~{basestem}.sam -bga | \
 		awk '$4 < ~{min_coverage}' > \
 		~{basestem}_below_~{min_coverage}x_coverage.bga
