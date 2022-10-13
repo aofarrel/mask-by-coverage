@@ -16,6 +16,7 @@ task make_mask_file {
 	Int finalDiskSize = ceil(size(sam, "GB")) + addldisk
 	
 	command <<<
+	set -eux pipefail
 	samtools sort -u ~{sam} > sorted_~{basestem}.sam
 	bedtools genomecov -ibam sorted_u_SAMEA2534421.sam -bga | \
 		awk '$4 < ~{min_coverage}' > \
