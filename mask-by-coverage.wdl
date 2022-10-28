@@ -2,7 +2,7 @@ version 1.0
 
 task make_mask_file {
 	input {
-		File sam
+		File bam
 		Int min_coverage
 
 		# runtime attributes
@@ -12,14 +12,14 @@ task make_mask_file {
 		Int memory   = 32
 		Int preempt  = 1
 	}
-	String basestem = basename(sam, ".sam")
-	Int finalDiskSize = ceil(size(sam, "GB")) + addldisk
+	String basestem = basename(bam, ".bam")
+	Int finalDiskSize = ceil(size(bam, "GB")) + addldisk
 	
 	command <<<
 	set -eux pipefail
-	cp ~{sam} .
-	samtools sort -u ~{basestem}.sam > sorted_u_~{basestem}.sam
-	bedtools genomecov -ibam sorted_u_~{basestem}.sam -bga | \
+	cp ~{bam} .
+	samtools sort -u ~{basestem}.bam > sorted_u_~{basestem}.bam
+	bedtools genomecov -ibam sorted_u_~{basestem}.bam -bga | \
 		awk '$4 < ~{min_coverage}' > \
 		~{basestem}_below_~{min_coverage}x_coverage.bga
 	>>>
@@ -42,14 +42,14 @@ task make_mask_file {
 
 workflow MaskByCoverage {
 	input {
-		Array[File] sams
+		Array[File] bams
 		Int min_coverage = 1
 	}
 
-	scatter(sam in sams) {
+	scatter(bam in bams) {
 		call make_mask_file {
 			input:
-				sam = sam,
+				bam = bam,
 				min_coverage = min_coverage
 		}
 	}
