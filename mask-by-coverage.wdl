@@ -21,7 +21,7 @@ task make_mask_file {
 	samtools sort -u ~{basestem}.bam > sorted_u_~{basestem}.bam
 	bedtools genomecov -ibam sorted_u_~{basestem}.bam -bga | \
 		awk '$4 < ~{min_coverage}' > \
-		~{basestem}_below_~{min_coverage}x_coverage.bga
+		~{basestem}_below_~{min_coverage}x_coverage.bedgraph
 	>>>
 
 	runtime {
@@ -34,7 +34,7 @@ task make_mask_file {
 	}
 
 	output {
-		File mask_file = glob("*coverage.bga")[0]
+		File mask_file = glob("*coverage.bedgraph")[0]
 	}
 
 }
